@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>Mini Flix</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#101010;--panel:#1d1d1d;--muted:#aaa;--red:#e50914}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:16px system-ui,-apple-system,sans-serif}
+header{padding:22px 18px 14px;background:linear-gradient(130deg,#300,#111 65%)}
+h1{margin:0;color:#ff3038;font-size:30px;letter-spacing:-1px}header p{margin:5px 0 0;color:#ddd}
+main{padding:16px;max-width:760px;margin:auto}
+.search{display:flex;gap:8px;margin:8px 0 22px}
+input{min-width:0;flex:1;padding:14px;border:1px solid #444;border-radius:12px;background:#202020;color:white;font-size:16px}
+button{border:0;border-radius:12px;padding:13px 15px;background:var(--red);color:white;font-weight:700;font-size:15px}
+h2{font-size:18px;margin:22px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.service{background:var(--panel);border:1px solid #333;border-radius:16px;padding:16px;min-height:112px;text-align:left}
+.service strong{display:block;font-size:17px;margin-bottom:6px}
+.service span{color:var(--muted);font-size:13px;font-weight:400}
+.note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:22px}
+</style>
+</head>
+<body>
+<header><h1>MINI FLIX</h1><p>Seus serviços de streaming em um só lugar.</p></header>
+<main>
+  <div class="search">
+    <input id="address" type="url" placeholder="Digite um endereço ou site">
+    <button id="go">Abrir</button>
+  </div>
+  <h2>Streaming</h2>
+  <div class="grid">
+    <button class="service" data-url="https://www.netflix.com/"><strong>🔴 Netflix</strong><span>Abrir site oficial</span></button>
+    <button class="service" data-url="https://www.crunchyroll.com/"><strong>🟠 Crunchyroll</strong><span>Anime e simulcasts</span></button>
+    <button class="service" data-url="https://www.youtube.com/"><strong>▶️ YouTube</strong><span>Vídeos e canais</span></button>
+    <button class="service" data-url="https://www.primevideo.com/"><strong>🎬 Prime Video</strong><span>Abrir site oficial</span></button>
+    <button class="service" data-url="https://www.disneyplus.com/"><strong>✨ Disney+</strong><span>Abrir site oficial</span></button>
+    <button class="service" data-url="https://www.max.com/"><strong>💜 Max</strong><span>Abrir site oficial</span></button>
+  </div>
+  <p class="note">Este Mini App funciona como uma central de atalhos. Por segurança e pelas restrições dos próprios serviços, Netflix e outros streamings podem não permitir reprodução incorporada dentro do Telegram. Nesses casos, o Telegram abre o site ou aplicativo oficial. É necessário ter uma conta válida nos serviços que exigem assinatura.</p>
+</main>
+<script>
+(function(){
+  const tg=window.Telegram&&window.Telegram.WebApp;
+  if(tg){tg.ready();tg.expand();}
+  function openSite(raw){
+    let url=raw.trim();
+    if(!/^https?:\/\//i.test(url)) url='https://'+url;
+    try{
+      const parsed=new URL(url);
+      if(!['http:','https:'].includes(parsed.protocol)) throw new Error('scheme');
+      if(tg&&tg.openLink) tg.openLink(parsed.href);
+      else window.open(parsed.href,'_blank','noopener');
+    }catch(e){alert('Digite um endereço válido.');}
+  }
+  document.querySelectorAll('[data-url]').forEach(b=>b.addEventListener('click',()=>openSite(b.dataset.url)));
+  document.getElementById('go').addEventListener('click',()=>openSite(document.getElementById('address').value));
+  document.getElementById('address').addEventListener('keydown',e=>{if(e.key==='Enter')openSite(e.target.value)});
+})();
+</script>
+</body>
+</html>
